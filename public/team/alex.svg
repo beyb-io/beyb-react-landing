@@ -1,0 +1,47 @@
+<svg width="360" height="480" viewBox="0 0 360 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F1117" />
+      <stop offset="1" stop-color="#2B2517" />
+    </linearGradient>
+    <linearGradient id="inner" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1B1E27" />
+      <stop offset="1" stop-color="#10131A" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F5D089" />
+      <stop offset="1" stop-color="#A67C2E" />
+    </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(180 150) rotate(90) scale(140)">
+      <stop offset="0" stop-color="#F5D089" stop-opacity="0.5" />
+      <stop offset="1" stop-color="#F5D089" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="360" height="480" rx="32" fill="url(#bg)" />
+  <rect x="24" y="24" width="312" height="432" rx="28" fill="url(#inner)" opacity="0.78" />
+  <circle cx="180" cy="170" r="74" fill="url(#halo)" />
+  <circle cx="180" cy="190" r="52" fill="#151922" />
+  <path
+    d="M24 338C86 298 150 278 226 280C286 282 324 302 360 322"
+    stroke="url(#gold)"
+    stroke-width="2"
+    opacity="0.85"
+  />
+  <path
+    d="M0 370C76 338 150 324 236 326C296 328 336 340 360 350"
+    stroke="#F5D089"
+    stroke-width="1.2"
+    opacity="0.5"
+  />
+  <text
+    x="50%"
+    y="72%"
+    text-anchor="middle"
+    fill="#F5D089"
+    font-size="56"
+    font-family="Arial, sans-serif"
+    letter-spacing="6"
+  >
+    AK
+  </text>
+</svg>
