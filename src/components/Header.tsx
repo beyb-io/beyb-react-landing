@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 
 export default function Header() {
-  const { copy, lang, setLang } = useI18n()
+  const { copy } = useI18n()
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur">
@@ -33,36 +33,7 @@ export default function Header() {
         </nav>
 
         <div className="order-2 ml-auto flex items-center gap-3 md:order-none md:ml-0">
-          <div
-            className="flex items-center gap-1 rounded-full border border-border/60 bg-background/60 p-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground"
-            role="group"
-            aria-label={copy.ui.languageLabel}
-          >
-            <button
-              type="button"
-              onClick={() => setLang('ru')}
-              className={`rounded-full px-3 py-1 transition ${
-                lang === 'ru'
-                  ? 'bg-[hsl(var(--accent-gold)/0.2)] text-foreground'
-                  : 'hover:text-foreground'
-              }`}
-              aria-pressed={lang === 'ru'}
-            >
-              {copy.ui.languageRu}
-            </button>
-            <button
-              type="button"
-              onClick={() => setLang('en')}
-              className={`rounded-full px-3 py-1 transition ${
-                lang === 'en'
-                  ? 'bg-[hsl(var(--accent-gold)/0.2)] text-foreground'
-                  : 'hover:text-foreground'
-              }`}
-              aria-pressed={lang === 'en'}
-            >
-              {copy.ui.languageEn}
-            </button>
-          </div>
+          {/* Language toggle removed; English is default */}
           <ThemeToggle label={copy.ui.toggleTheme} />
           <Button
             asChild

@@ -17,6 +17,13 @@ To build this application for production:
 pnpm build
 ```
 
+# Deploying to Railway
+
+- Build command: `npm run build`
+- Output directory: `.output`
+- Start command: `npm run start`
+- Config file: `railway.toml` (already included) sets the Nixpacks builder, points Railway to `.output`, and starts `node .output/server/index.mjs` via the `start` script.
+
 ## Testing
 
 This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:

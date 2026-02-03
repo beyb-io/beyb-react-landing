@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 
-export type Lang = 'ru' | 'en'
+export type Lang = 'en'
 
 export type ChatMessage = {
   role: 'user' | 'ai'
   text: string
 }
 
-export const defaultLang: Lang = 'ru'
+export const defaultLang: Lang = 'en'
 
 type Translation = {
   meta: {
@@ -24,9 +24,6 @@ type Translation = {
   }
   ui: {
     toggleTheme: string
-    languageLabel: string
-    languageRu: string
-    languageEn: string
   }
   hero: {
     eyebrow: string
@@ -114,279 +111,6 @@ type Translation = {
 }
 
 export const translations: Record<Lang, Translation> = {
-  ru: {
-    meta: {
-      title: 'BEYB — AI Yields on BNB',
-      description:
-        'BEYB — AI чат для yield-стратегий в BNB. Запросите стратегию и риски простыми словами.',
-    },
-    name: 'BEYB',
-    navCta: 'Получить доступ',
-    nav: {
-      how: 'Как это работает',
-      demo: 'Демо',
-      team: 'Команда',
-      faq: 'Вопросы',
-    },
-    ui: {
-      toggleTheme: 'Переключить тему',
-      languageLabel: 'Язык',
-      languageRu: 'RU',
-      languageEn: 'EN',
-    },
-    hero: {
-      eyebrow: 'AI × DeFi на BNB Chain',
-      title: 'Доходность в BNB через один вопрос',
-      subtitle:
-        'Спросите о доходности — AI найдет стратегии 6-28% APY и объяснит риски простым языком.',
-      primaryCta: 'Получить доступ',
-      secondaryCta: 'Смотреть демо',
-      note: 'Бета-версия уже в разработке.',
-      logosLabel: 'Логотипы DeFi-платформ',
-      placeholder: {
-        label: 'BEYB beta',
-        badge: 'BNB',
-        cards: [
-          {
-            label: 'Доходность',
-            title: '8-12% APY',
-            text: 'Низкий риск',
-          },
-          {
-            label: 'Риски',
-            title: 'Понятно',
-            text: 'Ликвидность + волатильность',
-          },
-        ],
-        footerLeft: 'Анализ в реальном времени',
-        footerRight: 'AI маршрутизация',
-      },
-    },
-    chatInputPlaceholder: 'Спросите о yield, рисках или протоколах...',
-    labels: {
-      user: 'Вы',
-      ai: 'AI',
-    },
-    heroChat: [
-      {
-        role: 'user',
-        text: 'Где сейчас нормальный yield в BNB с низким риском?',
-      },
-      {
-        role: 'ai',
-        text: 'Вот 3 варианта: 8–12% APY, низкий риск, без лонг-экспозиции. Объясню, почему.',
-      },
-      {
-        role: 'user',
-        text: 'А что если рынок упадет?',
-      },
-      {
-        role: 'ai',
-        text: 'Покажу стресс-сценарий, альтернативы и как ограничить просадки.',
-      },
-    ],
-    what: {
-      title: 'Как BEYB упрощает yield',
-      items: [
-        {
-          label: 'Вопрос',
-          title: 'Спросите в чате',
-          text: 'Спросите: «Где 10% APY с низким риском?» — и получите ответ за секунды.',
-        },
-        {
-          label: 'Анализ',
-          title: 'AI анализирует',
-          text: 'AI анализирует 50+ протоколов BNB Chain в реальном времени.',
-        },
-        {
-          label: 'Риски',
-          title: 'Объясняет риски',
-          text: 'Понятное объяснение рисков: волатильность, ликвидность, смарт-контракты.',
-        },
-      ],
-    },
-    how: {
-      title: 'Как это работает',
-      steps: [
-        {
-          label: 'Шаг 1',
-          title: 'Подключите кошелек',
-          text: 'MetaMask, Trust Wallet, WalletConnect.',
-        },
-        {
-          label: 'Шаг 2',
-          title: 'Задайте вопрос',
-          text: 'Напишите, что нужно: «10% APY с низким риском».',
-        },
-        {
-          label: 'Шаг 3',
-          title: 'Получите стратегии',
-          text: 'AI анализирует 50+ протоколов за секунды.',
-        },
-        {
-          label: 'Шаг 4',
-          title: 'Действуйте',
-          text: 'Выполните стратегию в один клик.',
-        },
-      ],
-    },
-    why: {
-      title: 'Почему BNB Chain?',
-      items: [
-        {
-          title: 'Низкие комиссии',
-          text: '~$0.10 за транзакцию vs $5-50 в Ethereum.',
-        },
-        {
-          title: 'Богатая DeFi экосистема',
-          text: '500+ протоколов, $5B+ TVL.',
-        },
-        {
-          title: 'Высокая ликвидность',
-          text: 'Быстрый вход и выход из позиций.',
-        },
-      ],
-    },
-    demo: {
-      title: 'BEYB в действии',
-      subtitle: 'Примеры диалогов и формата ответа',
-      tabs: {
-        lowRisk: 'Низкий риск',
-        highApy: 'Высокий APY',
-        explain: 'Объяснить риски',
-      },
-      samples: {
-        lowRisk: [
-          {
-            role: 'user',
-            text: 'Нужна низкорисковая доходность в BNB на 3–6 месяцев.',
-          },
-          {
-            role: 'ai',
-            text: '3 стратегии: 6–10% APY, высокая ликвидность, минимальная волатильность. Сравню риски.',
-          },
-          { role: 'user', text: 'А как насчет выхода без штрафов?' },
-          {
-            role: 'ai',
-            text: 'Выберем варианты с быстрым выходом и покажу условия.',
-          },
-        ],
-        highApy: [
-          { role: 'user', text: 'Хочу выше APY, но без полного риска.' },
-          {
-            role: 'ai',
-            text: 'Можно 18–28% APY на BNB, но риск средний. Расскажу, где скрытые комиссии.',
-          },
-          { role: 'user', text: 'Какие сценарии просадки?' },
-          {
-            role: 'ai',
-            text: 'Покажу худший сценарий и как захеджировать риск.',
-          },
-        ],
-        explain: [
-          { role: 'user', text: 'Объясни риски по стратегии X.' },
-          {
-            role: 'ai',
-            text: 'Основные риски: волатильность, ликвидность, смарт-контракты. Важно знать триггеры.',
-          },
-          { role: 'user', text: 'Как снизить риск?' },
-          {
-            role: 'ai',
-            text: 'Дам альтернативы с меньшим APY и объясню компромиссы.',
-          },
-        ],
-      },
-    },
-    security: {
-      title: 'Безопасность прежде всего',
-      items: [
-        'Некостодиально — ваши ключи остаются у вас.',
-        'Проверенные протоколы — работаем только с аудированными контрактами.',
-        'Мониторинг рисков — AI предупреждает о потенциальных угрозах.',
-        'Прозрачность — открытое объяснение каждой стратегии.',
-      ],
-    },
-    team: {
-      title: 'Команда, которая умеет запускать',
-      body: [
-        'Выходцы из TON экосистемы. Запускали несколько Web3 проектов.',
-        'Сейчас строим AI-first продукт для yield в BNB.',
-      ],
-      badges: [
-        'TON alumni',
-        'Multiple launches',
-        'Product & execution',
-        'BNB-focused',
-      ],
-      members: [
-        {
-          name: 'Алекс К.',
-          role: 'Основатель / продукт',
-          bio: 'Короткое био — допишем позже.',
-          image: '/team/alex.svg',
-          imageAlt: 'Фото Алекса',
-        },
-        {
-          name: 'Мира С.',
-          role: 'AI / Research',
-          bio: 'Короткое био — допишем позже.',
-          image: '/team/mira.svg',
-          imageAlt: 'Фото Миры',
-        },
-        {
-          name: 'Денис Р.',
-          role: 'Инженерия',
-          bio: 'Короткое био — допишем позже.',
-          image: '/team/denis.svg',
-          imageAlt: 'Фото Дениса',
-        },
-      ],
-    },
-    cta: {
-      title: 'Будьте первыми',
-      text: 'Оставьте контакт — пришлем демо и доступ к первому релизу.',
-      placeholder: 'Email или Telegram',
-      button: 'Получить доступ',
-      loading: 'Отправляем...',
-      success: 'Спасибо! Мы скоро свяжемся.',
-      error: 'Введите корректный email или Telegram.',
-      socialProof: 'Уже 500+ в очереди',
-      note: 'Без спама. 1–2 обновления в месяц.',
-    },
-    faq: {
-      title: 'Частые вопросы',
-      items: [
-        {
-          question: 'Как AI выбирает стратегии?',
-          answer:
-            'AI анализирует APY, TVL, историю протокола, аудиты и риски ликвидности.',
-        },
-        {
-          question: 'Нужно ли платить за использование?',
-          answer:
-            'Базовые функции бесплатны. Премиум-аналитика будет доступна позже.',
-        },
-        {
-          question: 'Какие кошельки поддерживаются?',
-          answer:
-            'MetaMask, Trust Wallet, Coinbase Wallet и другие через WalletConnect.',
-        },
-        {
-          question: 'Могу ли я потерять деньги?',
-          answer:
-            'DeFi несет риски. AI помогает их понять, но не гарантирует прибыль.',
-        },
-      ],
-    },
-    footer: {
-      copyright: '© BEYB',
-      links: [
-        { label: 'X', href: 'https://x.com/aiyieldchat' },
-        { label: 'Telegram', href: 'https://t.me/aiyieldchat' },
-        { label: 'Email', href: 'mailto:hello@aiyield.chat' },
-      ],
-    },
-  },
   en: {
     meta: {
       title: 'BEYB — AI Yields on BNB',
@@ -403,9 +127,6 @@ export const translations: Record<Lang, Translation> = {
     },
     ui: {
       toggleTheme: 'Toggle theme',
-      languageLabel: 'Language',
-      languageRu: 'RU',
-      languageEn: 'EN',
     },
     hero: {
       eyebrow: 'AI × DeFi on BNB Chain',
@@ -658,48 +379,15 @@ export const translations: Record<Lang, Translation> = {
   },
 }
 
-const isLang = (value: string | null): value is Lang =>
-  value === 'ru' || value === 'en'
-
-const getPreferredLang = (): Lang => {
-  if (typeof window === 'undefined') {
-    return defaultLang
-  }
-
-  const params = new URLSearchParams(window.location.search)
-  const paramLang = params.get('lang')
-  if (isLang(paramLang)) {
-    return paramLang
-  }
-
-  const stored = window.localStorage.getItem('lang')
-  if (isLang(stored)) {
-    return stored
-  }
-
-  return navigator.language.toLowerCase().startsWith('ru') ? 'ru' : 'en'
-}
-
 export function useI18n() {
-  const [lang, setLang] = useState<Lang>(defaultLang)
-
-  useEffect(() => {
-    const resolved = getPreferredLang()
-    setLang((current) => (current === resolved ? current : resolved))
-  }, [])
-
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.documentElement.lang = lang
-      document.documentElement.dataset.lang = lang
+      document.documentElement.lang = defaultLang
+      document.documentElement.dataset.lang = defaultLang
     }
+  }, [])
 
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('lang', lang)
-    }
-  }, [lang])
+  const copy = useMemo(() => translations[defaultLang], [])
 
-  const copy = useMemo(() => translations[lang], [lang])
-
-  return { lang, setLang, copy }
+  return { lang: defaultLang, copy }
 }
