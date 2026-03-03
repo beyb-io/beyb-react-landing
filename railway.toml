@@ -1,5 +1,7 @@
 [build]
-builder = "DOCKERFILE"
+builder = "RAILPACK"
+buildCommand = "pnpm run build"
+outputDirectory = ".output"
 
 [start]
 command = "pnpm run start"
