@@ -2,6 +2,9 @@
   "name": "beyb-react-landing",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
