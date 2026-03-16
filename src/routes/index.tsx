@@ -1,9 +1,21 @@
-import { type FormEvent, useRef, useState } from 'react'
+import {
+  forwardRef,
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type FormEvent,
+  type ReactNode,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import {
+  Eye,
+  FileCheck,
+  KeyRound,
+  ShieldCheck,
+} from 'lucide-react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Bot, MessageSquare, Search, Wallet, Zap } from 'lucide-react'
 
-import BackgroundWaves from '@/components/BackgroundWaves'
-import ChatPreview from '@/components/ChatPreview'
 import {
   AnimatedBeam,
   BeamContainer,
@@ -15,651 +27,575 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import BeybLogo from '@/components/BeybLogo'
+import { BorderBeam } from '@/components/ui/border-beam'
 import { Input } from '@/components/ui/input'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
-import { LogoCarousel } from '@/components/ui/logo-carousel'
-import { TextureCard } from '@/components/ui/texture-card'
-import { useI18n } from '@/lib/i18n'
+import { ShimmerButton } from '@/components/ui/shimmer-button'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({ component: LandingPage })
 
-const heroLogos = [
-  'PancakeSwap',
+const textureWaveAsset =
+  'http://localhost:3845/assets/82f3fac497d62fd914622abc1823127c3c6a9e0c.png'
+const arrowAsset =
+  'http://localhost:3845/assets/97446840bad0d9404a230950e09daa14100c6239.png'
+
+const simplifyCards = [
+  {
+    eyebrow: 'QUESTION',
+    title: 'Ask in chat',
+    text: 'Ask: "Where can I get 10% APY with low risk?" and get an answer in seconds.',
+  },
+  {
+    eyebrow: 'EXPLAINS RISKS',
+    title: 'Explains risks',
+    text: 'Clear explanation of risks: volatility, liquidity, smart contract.',
+  },
+  {
+    eyebrow: 'ANALYZE',
+    title: 'Ask in chat',
+    text: 'AI analyzes 50+ BNB Chain protocols in real time.',
+  },
+]
+
+const whyBnbCards = [
+  {
+    title: 'Low Fees',
+    text: 'From $0.10 vs $5-50 on Ethereum',
+  },
+  {
+    title: 'Rich DeFi ecosystem',
+    text: '500+ protocols, $5B+ TVL',
+  },
+  {
+    title: 'High liquidity',
+    text: 'Quick access to your funds.',
+  },
+]
+
+const safetyCards = [
+  {
+    title: 'Non-custodial access',
+    text: 'Your keys remain under your control. BEYB does not hold user funds.',
+    icon: KeyRound,
+    className: 'md:col-span-2 md:min-h-[220px]',
+  },
+  {
+    title: 'Audited protocols',
+    text: 'We focus on protocols with public audits and established on-chain track records.',
+    icon: FileCheck,
+    className: 'md:min-h-[220px]',
+  },
+  {
+    title: 'Risk visibility',
+    text: 'Each strategy includes a plain-language breakdown of liquidity, volatility and contract exposure.',
+    icon: Eye,
+    className: 'md:min-h-[220px]',
+  },
+  {
+    title: 'Safety checks',
+    text: 'BEYB surfaces red flags before you move capital and helps compare safer alternatives.',
+    icon: ShieldCheck,
+    className: 'md:col-span-2 md:min-h-[220px]',
+  },
+]
+
+const faqItems = [
+  {
+    question: 'What does BEYB actually do?',
+    answer:
+      'It turns a natural-language question into a shortlist of BNB yield strategies, then explains tradeoffs and risks in plain English.',
+  },
+  {
+    question: 'Does BEYB manage my funds?',
+    answer:
+      'No. The product is designed as a research and decision layer. Wallet control stays with the user.',
+  },
+  {
+    question: 'How are strategies ranked?',
+    answer:
+      'They are compared by APY profile, liquidity conditions, contract and protocol risk, and how easy it is to exit.',
+  },
+  {
+    question: 'Is this only for advanced DeFi users?',
+    answer:
+      'No. The main point is to remove DeFi jargon and show why a strategy may or may not fit a user goal.',
+  },
+  {
+    question: 'Why start with BNB Chain?',
+    answer:
+      'BNB Chain has low fees, deep retail activity and enough protocol diversity to make the first release useful quickly.',
+  },
+  {
+    question: 'When do I get access?',
+    answer:
+      'Early access is rolled out through the waitlist as demo capacity opens up and onboarding is expanded.',
+  },
+]
+
+const marqueeItems = [
+  'Pancake Swap',
   'Venus',
-  'Alpaca',
-  'Beefy',
-  'Wombat',
-  'Radiant',
-  'Stargate',
+  'Pendle',
+  'Pancake Swap',
+  'Venus',
   'Pendle',
 ]
 
-function App() {
-  const { copy } = useI18n()
-  const [ctaValue, setCtaValue] = useState('')
-  const [ctaStatus, setCtaStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error'
-  >('idle')
-  const [ctaError, setCtaError] = useState('')
-  const howContainerRef = useRef<HTMLDivElement>(null)
-  const howCoreRef = useRef<HTMLDivElement>(null)
-  const howStepOneRef = useRef<HTMLDivElement>(null)
-  const howStepTwoRef = useRef<HTMLDivElement>(null)
-  const howStepThreeRef = useRef<HTMLDivElement>(null)
-  const howStepFourRef = useRef<HTMLDivElement>(null)
-  const [stepOne, stepTwo, stepThree, stepFour] = copy.how.steps
+function LandingPage() {
+  const [contact, setContact] = useState('')
+  const [ctaStatus, setCtaStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const beamContainerRef = useRef<HTMLDivElement>(null)
+  const beamCenterRef = useRef<HTMLDivElement>(null)
+  const beamTopLeftRef = useRef<HTMLDivElement>(null)
+  const beamTopRightRef = useRef<HTMLDivElement>(null)
+  const beamBottomLeftRef = useRef<HTMLDivElement>(null)
+  const beamBottomRightRef = useRef<HTMLDivElement>(null)
 
   const isLoading = ctaStatus === 'loading'
-  const isSuccess = ctaStatus === 'success'
-  const isError = ctaStatus === 'error'
 
-  const isValidContact = (value: string) => {
-    const normalized = value.trim()
-    if (!normalized) {
-      return false
-    }
+  const marqueeText = useMemo(() => marqueeItems.join('   '), [])
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const value = contact.trim()
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const telegramHandleRegex = /^@?[a-zA-Z0-9_]{5,32}$/
     const telegramUrlRegex =
       /^https?:\/\/(t\.me|telegram\.me)\/[a-zA-Z0-9_]{5,32}$/
 
-    return (
-      emailRegex.test(normalized) ||
-      telegramHandleRegex.test(normalized) ||
-      telegramUrlRegex.test(normalized)
-    )
-  }
-
-  const handleCtaSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const normalized = ctaValue.trim()
-
-    if (!isValidContact(normalized)) {
-      setCtaError(copy.cta.error)
+    if (
+      !value ||
+      (!emailRegex.test(value) &&
+        !telegramHandleRegex.test(value) &&
+        !telegramUrlRegex.test(value))
+    ) {
       setCtaStatus('error')
       return
     }
 
     setCtaStatus('loading')
-    setCtaError('')
 
     setTimeout(() => {
+      setContact('')
       setCtaStatus('success')
-      setCtaValue('')
-    }, 900)
+    }, 800)
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-aurora">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-screen overflow-hidden">
-        <video
-          className="h-full w-full object-cover opacity-60"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-        >
-          <source src="/bg.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background" />
-      </div>
-      <div className="pointer-events-none absolute inset-0 bg-noise opacity-40" />
-      <BackgroundWaves />
+    <main
+      className="landing-shell text-foreground"
+      style={
+        {
+          '--texture-wave': `url("${textureWaveAsset}")`,
+        } as CSSProperties
+      }
+    >
+      <div className="landing-texture landing-texture-top" aria-hidden="true" />
+      <div className="landing-texture landing-texture-middle" aria-hidden="true" />
+      <div className="landing-texture landing-texture-bottom" aria-hidden="true" />
 
-      <section className="relative z-10 mx-auto flex min-h-[90vh] w-full max-w-6xl flex-col gap-12 px-6 pb-20 pt-16 md:min-h-screen md:grid md:grid-cols-[1.05fr_0.95fr] md:items-center md:pt-24">
-        <div className="flex flex-col gap-6">
-          <Badge
-            variant="outline"
-            className="w-fit border-border/60 bg-background/70 px-3 py-1 text-[11px] uppercase tracking-[0.3em] text-muted-foreground"
-          >
-            {copy.hero.eyebrow}
-          </Badge>
-          <h1 className="animate-fade-up text-[34px] font-semibold leading-tight tracking-tight text-foreground md:text-5xl">
-            {copy.hero.title}
-          </h1>
-          <p
-            className="animate-fade-up text-base leading-relaxed text-muted-foreground md:text-lg"
-            style={{ animationDelay: '120ms' }}
-          >
-            {copy.hero.subtitle}
-          </p>
-          <div
-            className="animate-fade-up flex flex-col gap-3 sm:flex-row sm:items-center"
-            style={{ animationDelay: '220ms' }}
-          >
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="rounded-full border-[hsl(var(--accent-gold))] text-foreground shadow-[0_0_30px_hsl(var(--accent-gold)/0.35)] hover:bg-[hsl(var(--accent-gold)/0.12)]"
-            >
-              <a href="#waitlist">{copy.hero.primaryCta}</a>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="rounded-full border-border/70 bg-background/60"
-            >
-              <a href="#demo">{copy.hero.secondaryCta}</a>
-            </Button>
+      <section className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1180px] flex-col px-4 pb-4 pt-4 sm:px-6 lg:px-8">
+        <div className="hero-grid absolute inset-x-0 top-0 h-[100dvh]" aria-hidden="true" />
+
+        <header className="animate-rise flex items-center justify-between gap-6 px-2 py-3 sm:px-4">
+          <nav className="hidden items-center gap-10 text-[16px] font-semibold uppercase tracking-[-0.02em] text-ink/70 lg:flex">
+            <a href="#top" className="transition-colors hover:text-ink">BEYB</a>
+            <a href="#how-it-works" className="transition-colors hover:text-ink">How it works</a>
+            <a href="#team" className="transition-colors hover:text-ink">Team</a>
+            <a href="#faq" className="transition-colors hover:text-ink">FAQ</a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <LaunchAppButton className="h-12 px-7 text-[16px] font-medium" />
           </div>
-          <p
-            className="animate-fade-up text-xs uppercase tracking-[0.3em] text-muted-foreground"
-            style={{ animationDelay: '320ms' }}
-          >
-            {copy.hero.note}
-          </p>
-          <div
-            className="animate-fade-up mt-4"
-            style={{ animationDelay: '380ms' }}
-          >
-            <LogoCarousel logos={heroLogos} ariaLabel={copy.hero.logosLabel} />
+        </header>
+
+        <div
+          id="top"
+          className="relative flex flex-1 flex-col justify-center pb-8 pt-6 sm:pt-8"
+        >
+          <div className="hero-glow hero-glow-left" aria-hidden="true" />
+          <div className="hero-glow hero-glow-right" aria-hidden="true" />
+
+          <div className="animate-rise delay-1 flex w-full justify-start overflow-visible">
+            <BeybLogo className="hero-wordmark h-auto w-[min(74vw,1080px)] max-w-none" />
+          </div>
+
+          <div className="animate-rise delay-2 mt-8 max-w-[1180px]">
+            <h2 className="max-w-[16ch] text-balance text-left text-[clamp(2.9rem,5vw,5.25rem)] font-semibold leading-[0.94] tracking-[-0.075em] text-ink">
+              Get BNB Yield by asking one question
+            </h2>
+            <p className="mt-4 max-w-[980px] text-left text-[clamp(1.2rem,2vw,2rem)] leading-[1.25] tracking-[-0.03em] text-ink/70">
+              Ask about returns - AI shows you 6-28% APY strategies and explains risks
+            </p>
+          </div>
+
+          <div className="animate-rise delay-3 mt-10 flex flex-wrap items-center gap-4">
+            <LaunchAppButton className="h-11 px-5 text-base font-medium" />
           </div>
         </div>
 
-        <div className="relative animate-fade-up" style={{ animationDelay: '140ms' }}>
-          <div className="glass-card relative overflow-hidden p-6 md:p-8">
-            <div className="absolute inset-0 bg-grid opacity-30" />
-            <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[hsl(var(--accent-gold)/0.25)] blur-[60px]" />
-            <div className="relative flex flex-col gap-6">
-              <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
-                <span>{copy.hero.placeholder.label}</span>
-                <span className="rounded-full border border-border/60 bg-background/70 px-3 py-1">
-                  {copy.hero.placeholder.badge}
-                </span>
+        <div className="relative left-1/2 mt-auto w-screen -translate-x-1/2 overflow-hidden border-y border-theme-line/80 bg-theme-strip shadow-[0_4px_14.5px_rgba(0,0,0,0.18)]">
+          <div className="marquee-track py-4 text-[clamp(1.5rem,4vw,2.8rem)] font-medium uppercase tracking-[-0.03em] text-ink/85">
+            <span>{marqueeText}</span>
+            <span aria-hidden="true">{marqueeText}</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-beyb-simplify-yield" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
+        <SectionTitle title="How BEYB simplify yield" />
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {simplifyCards.map((card) => (
+            <BeamCard key={card.title + card.eyebrow} className="h-full min-h-[206px]">
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink-muted">
+                {card.eyebrow}
+              </p>
+              <h3 className="mt-5 text-[1.6rem] font-semibold tracking-[-0.04em] text-ink">
+                {card.title}
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-ink-muted sm:text-base">{card.text}</p>
+            </BeamCard>
+          ))}
+        </div>
+      </section>
+
+      <section id="how-it-works" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
+        <SectionTitle title="How it works" />
+        <div className="theme-panel relative mt-6 overflow-hidden p-4 sm:p-6">
+          <BorderBeam
+            size={140}
+            duration={8}
+            colorFrom="#d7b990"
+            colorTo="#f4eee5"
+            borderWidth={2}
+          />
+          <div className="grid gap-5 md:hidden">
+            <MiniStepCard title="Подключите кошелек" icon="💼" />
+            <MiniStepCard title="Получите описание стратегии" icon="🔍" />
+            <MiniStepCard title="Защита и риски" icon="🛡️" />
+            <MiniStepCard title="Доход и APY" icon="⚡" />
+          </div>
+
+          <BeamContainer
+            ref={beamContainerRef}
+            className="relative hidden min-h-[420px] items-center justify-center rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0.08))] px-10 py-8 md:flex"
+          >
+            <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-x-8 gap-y-12">
+              <div className="flex justify-end">
+                <StepNode
+                  ref={beamTopLeftRef}
+                  icon="💼"
+                  label="Подключите кошелек"
+                  tone="sky"
+                />
               </div>
-              <div className="space-y-3">
-                <div className="h-3 w-3/4 rounded-full bg-muted/40" />
-                <div className="h-3 w-2/3 rounded-full bg-muted/30" />
-                <div className="h-3 w-1/2 rounded-full bg-muted/25" />
+
+              <div className="row-span-2 flex justify-center">
+                <CenterNode ref={beamCenterRef} />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
-                  <p className="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
-                    {copy.hero.placeholder.cards[0].label}
-                  </p>
-                  <p className="mt-2 text-base font-semibold text-foreground">
-                    {copy.hero.placeholder.cards[0].title}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {copy.hero.placeholder.cards[0].text}
+
+              <div className="flex justify-start">
+                <StepNode
+                  ref={beamTopRightRef}
+                  icon="🔍"
+                  label="Получите описание стратегии"
+                  tone="gold"
+                />
+              </div>
+
+              <div className="flex justify-end">
+                <StepNode
+                  ref={beamBottomLeftRef}
+                  icon="🛡️"
+                  label="Защита и риски"
+                  tone="blue"
+                />
+              </div>
+
+              <div className="flex justify-start">
+                <StepNode
+                  ref={beamBottomRightRef}
+                  icon="⚡"
+                  label="Доход и APY"
+                  tone="peach"
+                />
+              </div>
+            </div>
+
+            <AnimatedBeam
+              containerRef={beamContainerRef}
+              fromRef={beamTopLeftRef}
+              toRef={beamCenterRef}
+              curvature={0.12}
+              pathWidth={2}
+              gradientStartColor="#d4bc9f"
+              gradientStopColor="#aa8f72"
+            />
+            <AnimatedBeam
+              containerRef={beamContainerRef}
+              fromRef={beamTopRightRef}
+              toRef={beamCenterRef}
+              curvature={-0.12}
+              pathWidth={2}
+              gradientStartColor="#d4bc9f"
+              gradientStopColor="#aa8f72"
+            />
+            <AnimatedBeam
+              containerRef={beamContainerRef}
+              fromRef={beamBottomLeftRef}
+              toRef={beamCenterRef}
+              curvature={-0.12}
+              pathWidth={2}
+              gradientStartColor="#d4bc9f"
+              gradientStopColor="#aa8f72"
+              delay={0.2}
+            />
+            <AnimatedBeam
+              containerRef={beamContainerRef}
+              fromRef={beamBottomRightRef}
+              toRef={beamCenterRef}
+              curvature={0.12}
+              pathWidth={2}
+              gradientStartColor="#d4bc9f"
+              gradientStopColor="#aa8f72"
+              delay={0.35}
+            />
+          </BeamContainer>
+        </div>
+      </section>
+
+      <section id="why-bnb-chain" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
+        <SectionTitle title="Why BNB chain" />
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {whyBnbCards.map((card) => (
+            <BeamCard key={card.title} className="min-h-[154px] justify-center">
+              <h3 className="text-[1.5rem] font-semibold tracking-[-0.04em] text-ink">
+                {card.title}
+              </h3>
+              <p className="mt-5 text-sm leading-7 text-ink-muted sm:text-base">{card.text}</p>
+            </BeamCard>
+          ))}
+        </div>
+      </section>
+
+      <section id="safety" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
+        <SectionTitle title="Safety first" />
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {safetyCards.map((card) => {
+            const Icon = card.icon
+            return (
+              <BeamCard key={card.title} className={`justify-between ${card.className}`}>
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-theme-card-soft text-ink shadow-[0_6px_16px_rgba(160,132,96,0.14)]">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <div className="mt-8">
+                  <h3 className="text-[1.35rem] font-semibold tracking-[-0.03em] text-ink">
+                    {card.title}
+                  </h3>
+                  <p className="mt-3 max-w-[40ch] text-sm leading-7 text-ink-muted sm:text-base">
+                    {card.text}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
-                  <p className="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
-                    {copy.hero.placeholder.cards[1].label}
-                  </p>
-                  <p className="mt-2 text-base font-semibold text-foreground">
-                    {copy.hero.placeholder.cards[1].title}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {copy.hero.placeholder.cards[1].text}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>{copy.hero.placeholder.footerLeft}</span>
-                <span className="rounded-full border border-border/40 px-3 py-1">
-                  {copy.hero.placeholder.footerRight}
-                </span>
-              </div>
-            </div>
-          </div>
+              </BeamCard>
+            )
+          })}
         </div>
       </section>
 
-      <section className="relative mx-auto w-full max-w-6xl px-6 py-16">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {copy.what.title}
-          </h2>
-        </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {copy.what.items.map((item, index) => (
-            <Card
-              key={item.title}
-              className="glass-card animate-fade-up border-border/50 py-2 shadow-none"
-              style={{ animationDelay: `${index * 120}ms` }}
-            >
-              <CardHeader className="gap-3">
-                <Badge
-                  variant="secondary"
-                  className="w-fit bg-background/70 text-[11px] uppercase tracking-[0.25em] text-muted-foreground"
-                >
-                  {item.label}
-                </Badge>
-                <CardTitle className="text-lg font-semibold text-foreground">
-                  {item.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0 text-sm leading-relaxed text-muted-foreground">
-                {item.text}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section
-        id="how"
-        className="relative mx-auto w-full max-w-6xl px-6 py-16"
-      >
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {copy.how.title}
-          </h2>
-        </div>
-        <BeamContainer
-          ref={howContainerRef}
-          className="glass-card relative mt-10 grid gap-10 overflow-hidden px-6 py-10 md:grid-cols-[1fr_auto_1fr] md:items-center md:px-10"
-        >
-          <div className="flex flex-col items-center gap-8">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <BeamNode
-                ref={howStepOneRef}
-                className="h-12 w-12 border-2 border-amber-500/25 bg-amber-500/10"
-              >
-                <Wallet className="h-5 w-5 text-amber-600" />
-              </BeamNode>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                {stepOne?.label}
-              </span>
-              <span className="text-sm font-semibold text-foreground">
-                {stepOne?.title}
-              </span>
-            </div>
-            <div className="flex flex-col items-center gap-3 text-center">
-              <BeamNode
-                ref={howStepTwoRef}
-                className="h-12 w-12 border-2 border-sky-500/25 bg-sky-500/10"
-              >
-                <MessageSquare className="h-5 w-5 text-sky-600" />
-              </BeamNode>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                {stepTwo?.label}
-              </span>
-              <span className="text-sm font-semibold text-foreground">
-                {stepTwo?.title}
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-col items-center gap-3 text-center">
-            <BeamNode
-              ref={howCoreRef}
-              className="h-16 w-16 border-2 border-[hsl(var(--accent-gold)/0.35)] bg-[hsl(var(--accent-gold)/0.15)] shadow-[0_0_20px_hsl(var(--accent-gold)/0.35)]"
-            >
-              <Bot className="h-7 w-7 text-[hsl(var(--accent-gold))]" />
-            </BeamNode>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-              BEYB AI
-            </span>
-          </div>
-          <div className="flex flex-col items-center gap-8">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <BeamNode
-                ref={howStepThreeRef}
-                className="h-12 w-12 border-2 border-emerald-500/25 bg-emerald-500/10"
-              >
-                <Search className="h-5 w-5 text-emerald-600" />
-              </BeamNode>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                {stepThree?.label}
-              </span>
-              <span className="text-sm font-semibold text-foreground">
-                {stepThree?.title}
-              </span>
-            </div>
-            <div className="flex flex-col items-center gap-3 text-center">
-              <BeamNode
-                ref={howStepFourRef}
-                className="h-12 w-12 border-2 border-orange-500/25 bg-orange-500/10"
-              >
-                <Zap className="h-5 w-5 text-orange-600" />
-              </BeamNode>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                {stepFour?.label}
-              </span>
-              <span className="text-sm font-semibold text-foreground">
-                {stepFour?.title}
-              </span>
-            </div>
-          </div>
-          <AnimatedBeam
-            containerRef={howContainerRef}
-            fromRef={howStepOneRef}
-            toRef={howCoreRef}
-            duration={3}
-            curvature={0.2}
-            gradientStartColor="#f59e0b"
-            gradientStopColor="#fbbf24"
-          />
-          <AnimatedBeam
-            containerRef={howContainerRef}
-            fromRef={howStepTwoRef}
-            toRef={howCoreRef}
-            duration={3}
-            delay={0.4}
-            curvature={-0.2}
-            gradientStartColor="#38bdf8"
-            gradientStopColor="#0ea5e9"
-          />
-          <AnimatedBeam
-            containerRef={howContainerRef}
-            fromRef={howStepThreeRef}
-            toRef={howCoreRef}
-            duration={3}
-            delay={0.8}
-            curvature={0.2}
-            gradientStartColor="#34d399"
-            gradientStopColor="#10b981"
-          />
-          <AnimatedBeam
-            containerRef={howContainerRef}
-            fromRef={howStepFourRef}
-            toRef={howCoreRef}
-            duration={3}
-            delay={1.2}
-            curvature={-0.2}
-            gradientStartColor="#fb923c"
-            gradientStopColor="#f97316"
-          />
-        </BeamContainer>
-      </section>
-
-      <section
-        id="why"
-        className="relative mx-auto w-full max-w-6xl px-6 py-16"
-      >
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {copy.why.title}
-          </h2>
-        </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {copy.why.items.map((item, index) => (
-            <Card
-              key={item.title}
-              className="glass-card animate-fade-up border-border/50 py-2 shadow-none"
-              style={{ animationDelay: `${index * 120}ms` }}
-            >
-              <CardHeader className="gap-3">
-                <CardTitle className="text-lg font-semibold text-foreground">
-                  {item.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0 text-sm leading-relaxed text-muted-foreground">
-                {item.text}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section
-        id="demo"
-        className="relative mx-auto w-full max-w-6xl px-6 py-16"
-      >
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {copy.demo.title}
-          </h2>
-          <p className="text-sm text-muted-foreground md:text-base">
-            {copy.demo.subtitle}
+      <section id="team" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
+        <SectionTitle title="Our team" />
+        <BeamCard className="mt-6 min-h-[144px] justify-center">
+          <p className="max-w-[720px] text-sm leading-7 text-ink-muted sm:text-base">
+            Product, DeFi research and AI tooling team building a simpler way to navigate BNB yield.
           </p>
+        </BeamCard>
+      </section>
+
+      <section id="faq" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
+        <SectionTitle title="FAQ" />
+        <div className="theme-panel relative mt-6 overflow-hidden px-5 py-2 sm:px-8">
+          <BorderBeam
+            size={140}
+            duration={8}
+            delay={0.3}
+            colorFrom="#d7b990"
+            colorTo="#f4eee5"
+            borderWidth={2}
+          />
+          <Accordion type="single" collapsible className="relative z-10">
+            {faqItems.map((item, index) => (
+              <AccordionItem key={item.question} value={`item-${index}`} className="border-theme-line/60">
+                <AccordionTrigger className="py-5 text-base font-semibold text-ink hover:text-ink">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="pb-5 text-sm leading-7 text-ink-muted sm:text-base">
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
-        <Tabs defaultValue="lowRisk" className="mt-8">
-          <TabsList className="h-auto w-full flex-wrap gap-2 rounded-full border border-border/50 bg-background/60 p-2 md:w-fit">
-            <TabsTrigger value="lowRisk" className="rounded-full px-4 py-2">
-              {copy.demo.tabs.lowRisk}
-            </TabsTrigger>
-            <TabsTrigger value="highApy" className="rounded-full px-4 py-2">
-              {copy.demo.tabs.highApy}
-            </TabsTrigger>
-            <TabsTrigger value="explain" className="rounded-full px-4 py-2">
-              {copy.demo.tabs.explain}
-            </TabsTrigger>
-          </TabsList>
-          <div className="mt-6">
-            <TabsContent value="lowRisk">
-              <ChatPreview
-                compact
-                messages={copy.demo.samples.lowRisk}
-                labels={copy.labels}
-                inputPlaceholder={copy.chatInputPlaceholder}
-              />
-            </TabsContent>
-            <TabsContent value="highApy">
-              <ChatPreview
-                compact
-                messages={copy.demo.samples.highApy}
-                labels={copy.labels}
-                inputPlaceholder={copy.chatInputPlaceholder}
-              />
-            </TabsContent>
-            <TabsContent value="explain">
-              <ChatPreview
-                compact
-                messages={copy.demo.samples.explain}
-                labels={copy.labels}
-                inputPlaceholder={copy.chatInputPlaceholder}
-              />
-            </TabsContent>
+      </section>
+
+      <section id="waitlist" className="mx-auto w-full max-w-[1180px] px-4 pb-16 pt-10 sm:px-6 lg:px-8">
+        <div className="cta-card relative grid gap-8 overflow-hidden lg:grid-cols-[1fr_0.95fr] lg:items-center">
+          <BorderBeam
+            size={160}
+            duration={9}
+            delay={1}
+            colorFrom="#d7b990"
+            colorTo="#f4eee5"
+            borderWidth={2}
+          />
+          <div>
+            <h2 className="text-[clamp(2rem,4.5vw,3.2rem)] font-semibold tracking-[-0.05em] text-ink">
+              Be the First
+            </h2>
+            <p className="mt-4 max-w-[430px] text-sm leading-7 text-ink sm:text-base">
+              Leave your contact - we&apos;ll send a demo and early access to the first release.
+            </p>
+            <p className="mt-5 text-sm text-ink-muted underline decoration-dotted underline-offset-4">
+              500+ already on the waitlist
+            </p>
           </div>
-        </Tabs>
-      </section>
 
-      <section
-        id="security"
-        className="relative mx-auto w-full max-w-6xl px-6 py-16"
-      >
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {copy.security.title}
-          </h2>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Input
+                value={contact}
+                onChange={(event) => {
+                  setContact(event.target.value)
+                  if (ctaStatus !== 'idle') {
+                    setCtaStatus('idle')
+                  }
+                }}
+                placeholder="Email or Telegram"
+                aria-label="Email or Telegram"
+                className="h-[59px] rounded-full border-theme-line bg-theme-card-soft px-5 text-base text-ink placeholder:text-ink-muted focus-visible:border-theme-line focus-visible:ring-0"
+              />
+
+              <ShimmerButton
+                type="submit"
+                disabled={isLoading}
+                shimmerColor="#fff6e8"
+                shimmerDuration="3.4s"
+                background="linear-gradient(96deg, hsl(var(--theme-button-start)) 4.81%, hsl(var(--theme-button-mid)) 27.4%, hsl(var(--theme-button-mid)) 73.56%, hsl(var(--theme-button-end)) 96.15%)"
+                className="h-[59px] rounded-full border-theme-line px-6 text-base font-medium text-ink shadow-[0_4px_11.6px_rgba(73,71,60,0.22)]"
+              >
+                {ctaStatus === 'success' ? 'Sent' : isLoading ? 'Sending...' : 'Get Access'}
+                <img src={arrowAsset} alt="" className="size-4 object-contain" />
+              </ShimmerButton>
+            </div>
+
+            <p className="px-2 text-sm text-ink-muted">
+              {ctaStatus === 'error'
+                ? 'Enter a valid email or Telegram contact.'
+                : 'No spam. 1-2 updates per month'}
+            </p>
+          </form>
         </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {copy.security.items.map((item, index) => (
-            <div
-              key={item}
-              className="glass-card animate-fade-up border-border/50 p-4 text-sm leading-relaxed text-muted-foreground"
-              style={{ animationDelay: `${index * 120}ms` }}
-            >
-              {item}
-            </div>
-          ))}
-        </div>
       </section>
-
-      <section
-        id="team"
-        className="relative mx-auto w-full max-w-6xl px-6 py-16"
-      >
-        <Card className="glass-card border-border/50 py-4 shadow-none">
-          <CardHeader className="gap-4">
-            <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl">
-              {copy.team.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-6 text-sm text-muted-foreground md:text-base">
-            <div className="flex flex-col gap-3">
-              {copy.team.body.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {copy.team.badges.map((badge) => (
-                <Badge
-                  key={badge}
-                  variant="outline"
-                  className="border-border/60 bg-background/60 text-xs uppercase tracking-[0.18em] text-muted-foreground"
-                >
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-            <div className="grid gap-4 pt-2 sm:grid-cols-2 lg:grid-cols-3">
-              {copy.team.members.map((member) => (
-                <div
-                  key={member.name}
-                  className="glass-card border-border/50 p-4"
-                >
-                  <img
-                    src={member.image}
-                    alt={member.imageAlt}
-                    className="h-44 w-full rounded-2xl object-cover"
-                    loading="lazy"
-                  />
-                  <div className="mt-4 flex flex-col gap-2">
-                    <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                      {member.role}
-                    </span>
-                    <h3 className="text-base font-semibold text-foreground">
-                      {member.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {member.bio}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      <section
-        id="waitlist"
-        className="relative mx-auto w-full max-w-6xl px-6 py-16"
-      >
-        <TextureCard className="relative w-full overflow-hidden border-border/40 shadow-[0_40px_90px_-70px_hsl(var(--accent-gold)/0.6)]">
-          <div className="edge-glow" />
-          <div className="relative px-6 py-10 text-foreground md:px-10">
-            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-              <div className="max-w-xl">
-                <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-                  {copy.cta.title}
-                </h2>
-                <p className="mt-3 text-sm text-muted-foreground md:text-base">
-                  {copy.cta.text}
-                </p>
-                <p className="mt-4 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                  {copy.cta.socialProof}
-                </p>
-              </div>
-              <div className="w-full max-w-md">
-                <form
-                  className="flex flex-col gap-3 sm:flex-row"
-                  onSubmit={handleCtaSubmit}
-                >
-                  <Input
-                    className="h-11 rounded-full border-border/60 bg-background/70"
-                    placeholder={copy.cta.placeholder}
-                    aria-label={copy.cta.placeholder}
-                    aria-invalid={isError}
-                    disabled={isLoading}
-                    onChange={(event) => {
-                      setCtaValue(event.target.value)
-                      if (ctaStatus !== 'idle') {
-                        setCtaStatus('idle')
-                      }
-                      if (ctaError) {
-                        setCtaError('')
-                      }
-                    }}
-                    type="text"
-                    value={ctaValue}
-                  />
-                  <Button
-                    className="h-11 rounded-full border-[hsl(var(--accent-gold))] px-6 text-foreground shadow-[0_0_24px_hsl(var(--accent-gold)/0.3)] hover:bg-[hsl(var(--accent-gold)/0.12)]"
-                    variant="outline"
-                    type="submit"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? copy.cta.loading : copy.cta.button}
-                  </Button>
-                </form>
-                {isError ? (
-                  <p className="mt-3 text-xs text-destructive" role="alert">
-                    {ctaError}
-                  </p>
-                ) : null}
-                {isSuccess ? (
-                  <p className="mt-3 text-xs text-emerald-400" role="status">
-                    {copy.cta.success}
-                  </p>
-                ) : null}
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {copy.cta.note}
-                </p>
-              </div>
-            </div>
-          </div>
-        </TextureCard>
-      </section>
-
-      <section
-        id="faq"
-        className="relative mx-auto w-full max-w-6xl px-6 py-16"
-      >
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {copy.faq.title}
-          </h2>
-        </div>
-        <Accordion
-          type="single"
-          collapsible
-          className="mt-8 grid gap-4 md:grid-cols-2"
-        >
-          {copy.faq.items.map((item, index) => (
-            <AccordionItem
-              key={item.question}
-              value={`faq-${index}`}
-              className="glass-card animate-fade-up border border-border/50 px-4"
-              style={{ animationDelay: `${index * 120}ms` }}
-            >
-              <AccordionTrigger className="text-base font-semibold text-foreground">
-                {item.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-sm leading-relaxed">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </section>
-
-      <footer className="relative mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 pb-10 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
-        <span>{copy.footer.copyright}</span>
-        <div className="flex gap-4">
-          {copy.footer.links.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </footer>
     </main>
+  )
+}
+
+function SectionTitle({ title }: { title: string }) {
+  return (
+    <h2 className="text-[clamp(2rem,4vw,3rem)] font-semibold tracking-[-0.05em] text-olive">
+      {title}
+    </h2>
+  )
+}
+
+function LaunchAppButton({ className }: { className?: string }) {
+  return (
+    <ShimmerButton
+      type="button"
+      shimmerColor="#fff8ec"
+      shimmerDuration="2.7s"
+      background="linear-gradient(96deg, hsl(var(--theme-button-start)) 4.81%, hsl(var(--theme-button-mid)) 27.4%, hsl(var(--theme-button-mid)) 73.56%, hsl(var(--theme-button-end)) 96.15%)"
+      className={`launch-button rounded-full ${className ?? ''}`}
+      onClick={() => {
+        window.location.href = '/app'
+      }}
+    >
+      Launch App
+      <img src={arrowAsset} alt="" className="size-4 object-contain" />
+    </ShimmerButton>
+  )
+}
+
+function BeamCard({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <article className={`theme-card relative overflow-hidden ${className ?? ''}`}>
+      <BorderBeam
+        size={110}
+        duration={7}
+        colorFrom="#d7b990"
+        colorTo="#f4eee5"
+        borderWidth={2}
+      />
+      {children}
+    </article>
+  )
+}
+
+const StepNode = forwardRef<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof BeamNode> & {
+    icon: string
+    label: string
+    tone?: 'sky' | 'gold' | 'blue' | 'peach'
+  }
+>(({ icon, label, tone = 'gold', className, ...props }, ref) => {
+  const toneClass = {
+    sky: 'bg-[#f1efe8]',
+    gold: 'bg-[#f3e8cf]',
+    blue: 'bg-[#e6edf4]',
+    peach: 'bg-[#f5e6db]',
+  }[tone]
+
+  return (
+    <BeamNode
+      ref={ref}
+      {...props}
+      className={`beam-step-node h-[118px] w-[220px] flex-col rounded-[24px] border-theme-line bg-theme-card px-4 py-4 text-center shadow-[0_7px_18px_rgba(180,145,105,0.14)] ${className ?? ''}`}
+    >
+      <span className={`beam-icon-circle ${toneClass} text-lg`}>{icon}</span>
+      <span className="mt-3 text-sm font-medium leading-5 text-ink">{label}</span>
+    </BeamNode>
+  )
+})
+
+StepNode.displayName = 'StepNode'
+
+function CenterNode(props: ComponentPropsWithoutRef<typeof BeamNode>) {
+  return (
+    <BeamNode
+      {...props}
+      className="beam-center-node flex h-[86px] w-[86px] flex-col rounded-full border-theme-line bg-theme-card shadow-[0_8px_24px_rgba(196,163,123,0.26)]"
+    >
+      <span className="beam-icon-circle bg-[linear-gradient(180deg,#f2e0be,#ebcf97)] text-[20px]">✦</span>
+      <span className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-ink/70">
+        BEYB AI
+      </span>
+    </BeamNode>
+  )
+}
+
+function MiniStepCard({ title, icon }: { title: string; icon: string }) {
+  return (
+    <div className="theme-card min-h-[100px] items-center text-center">
+      <span className="beam-icon-circle bg-theme-card-soft text-lg">{icon}</span>
+      <p className="mt-3 text-sm font-medium text-ink">{title}</p>
+    </div>
   )
 }
