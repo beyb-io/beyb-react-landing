@@ -1,7 +1,6 @@
 import {
   forwardRef,
   type ComponentPropsWithoutRef,
-  type CSSProperties,
   type FormEvent,
   type ReactNode,
   useMemo,
@@ -9,6 +8,7 @@ import {
   useState,
 } from 'react'
 import {
+  ArrowRight,
   Eye,
   FileCheck,
   KeyRound,
@@ -28,16 +28,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import BeybLogo from '@/components/BeybLogo'
+import { Team1 } from '@/components/team1'
 import { BorderBeam } from '@/components/ui/border-beam'
 import { Input } from '@/components/ui/input'
 import { ShimmerButton } from '@/components/ui/shimmer-button'
 
 export const Route = createFileRoute('/')({ component: LandingPage })
-
-const textureWaveAsset =
-  'http://localhost:3845/assets/82f3fac497d62fd914622abc1823127c3c6a9e0c.png'
-const arrowAsset =
-  'http://localhost:3845/assets/97446840bad0d9404a230950e09daa14100c6239.png'
 
 const simplifyCards = [
   {
@@ -52,7 +48,7 @@ const simplifyCards = [
   },
   {
     eyebrow: 'ANALYZE',
-    title: 'Ask in chat',
+    title: 'AI analyzes',
     text: 'AI analyzes 50+ BNB Chain protocols in real time.',
   },
 ]
@@ -132,6 +128,37 @@ const faqItems = [
   },
 ]
 
+const teamMembers = [
+  {
+    id: 'ismail',
+    name: 'Ismail',
+    role: 'CEO & Founder',
+    bio: 'Previously built in TON DeFi at Bidask.',
+    avatar: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-1.webp',
+  },
+  {
+    id: 'beibut',
+    name: 'Beibut',
+    role: 'CTO',
+    bio: 'Previously worked on TON DeFi infrastructure at DYOR.',
+    avatar: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-2.webp',
+  },
+  {
+    id: 'rashid',
+    name: 'Rashid',
+    role: 'Product Lead',
+    bio: 'Previously shipped TON DeFi product experience at EVAA.',
+    avatar: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-3.webp',
+  },
+  {
+    id: 'aisan',
+    name: 'Aisan',
+    role: 'Lead Designer',
+    bio: 'Designing for TON DeFi products and user flows.',
+    avatar: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-4.webp',
+  },
+]
+
 const marqueeItems = [
   'Pancake Swap',
   'Venus',
@@ -183,14 +210,7 @@ function LandingPage() {
   }
 
   return (
-    <main
-      className="landing-shell text-foreground"
-      style={
-        {
-          '--texture-wave': `url("${textureWaveAsset}")`,
-        } as CSSProperties
-      }
-    >
+    <main className="landing-shell text-foreground">
       <div className="landing-texture landing-texture-top" aria-hidden="true" />
       <div className="landing-texture landing-texture-middle" aria-hidden="true" />
       <div className="landing-texture landing-texture-bottom" aria-hidden="true" />
@@ -245,7 +265,7 @@ function LandingPage() {
       </section>
 
       <section id="how-beyb-simplify-yield" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
-        <SectionTitle title="How BEYB simplify yield" />
+        <SectionTitle title="How BEYB simplifies yield" />
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {simplifyCards.map((card) => (
             <BeamCard key={card.title + card.eyebrow} className="h-full min-h-[206px]">
@@ -272,10 +292,10 @@ function LandingPage() {
             borderWidth={2}
           />
           <div className="grid gap-5 md:hidden">
-            <MiniStepCard title="Подключите кошелек" icon="💼" />
-            <MiniStepCard title="Получите описание стратегии" icon="🔍" />
-            <MiniStepCard title="Защита и риски" icon="🛡️" />
-            <MiniStepCard title="Доход и APY" icon="⚡" />
+            <MiniStepCard title="Connect your wallet" icon="💼" />
+            <MiniStepCard title="Review the strategy" icon="🔍" />
+            <MiniStepCard title="Check risks and safety" icon="🛡️" />
+            <MiniStepCard title="See yield and APY" icon="⚡" />
           </div>
 
           <BeamContainer
@@ -287,7 +307,7 @@ function LandingPage() {
                 <StepNode
                   ref={beamTopLeftRef}
                   icon="💼"
-                  label="Подключите кошелек"
+                  label="Connect your wallet"
                   tone="sky"
                 />
               </div>
@@ -300,7 +320,7 @@ function LandingPage() {
                 <StepNode
                   ref={beamTopRightRef}
                   icon="🔍"
-                  label="Получите описание стратегии"
+                  label="Review the strategy"
                   tone="gold"
                 />
               </div>
@@ -309,7 +329,7 @@ function LandingPage() {
                 <StepNode
                   ref={beamBottomLeftRef}
                   icon="🛡️"
-                  label="Защита и риски"
+                  label="Check risks and safety"
                   tone="blue"
                 />
               </div>
@@ -318,7 +338,7 @@ function LandingPage() {
                 <StepNode
                   ref={beamBottomRightRef}
                   icon="⚡"
-                  label="Доход и APY"
+                  label="See yield and APY"
                   tone="peach"
                 />
               </div>
@@ -367,7 +387,7 @@ function LandingPage() {
       </section>
 
       <section id="why-bnb-chain" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
-        <SectionTitle title="Why BNB chain" />
+        <SectionTitle title="Why BNB Chain" />
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {whyBnbCards.map((card) => (
             <BeamCard key={card.title} className="min-h-[154px] justify-center">
@@ -405,12 +425,12 @@ function LandingPage() {
       </section>
 
       <section id="team" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
-        <SectionTitle title="Our team" />
-        <BeamCard className="mt-6 min-h-[144px] justify-center">
-          <p className="max-w-[720px] text-sm leading-7 text-ink-muted sm:text-base">
-            Product, DeFi research and AI tooling team building a simpler way to navigate BNB yield.
-          </p>
-        </BeamCard>
+        <Team1
+          heading="Our team"
+          description="Four people building BEYB across business development, backend engineering, frontend product, and design."
+          members={teamMembers}
+          className="mt-0"
+        />
       </section>
 
       <section id="faq" className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 lg:px-8">
@@ -485,7 +505,7 @@ function LandingPage() {
                 className="h-[59px] rounded-full border-theme-line px-6 text-base font-medium text-ink shadow-[0_4px_11.6px_rgba(73,71,60,0.22)]"
               >
                 {ctaStatus === 'success' ? 'Sent' : isLoading ? 'Sending...' : 'Get Access'}
-                <img src={arrowAsset} alt="" className="size-4 object-contain" />
+                <ArrowRight className="size-4" aria-hidden="true" />
               </ShimmerButton>
             </div>
 
@@ -522,7 +542,7 @@ function LaunchAppButton({ className }: { className?: string }) {
       }}
     >
       Launch App
-      <img src={arrowAsset} alt="" className="size-4 object-contain" />
+      <ArrowRight className="size-4" aria-hidden="true" />
     </ShimmerButton>
   )
 }
@@ -584,7 +604,7 @@ function CenterNode(props: ComponentPropsWithoutRef<typeof BeamNode>) {
       className="beam-center-node flex h-[86px] w-[86px] flex-col rounded-full border-theme-line bg-theme-card shadow-[0_8px_24px_rgba(196,163,123,0.26)]"
     >
       <span className="beam-icon-circle bg-[linear-gradient(180deg,#f2e0be,#ebcf97)] text-[20px]">✦</span>
-      <span className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-ink/70">
+      <span className="mt-2 text-[11px] font-semibold whitespace-nowrap uppercase tracking-[0.24em] text-ink/70">
         BEYB AI
       </span>
     </BeamNode>

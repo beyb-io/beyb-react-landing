@@ -135,8 +135,12 @@
     position: absolute;
     inset-inline: 0;
     height: 960px;
-    background-image: var(--texture-wave);
-    background-size: cover;
+    background-image:
+      radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.68), transparent 0 16%),
+      radial-gradient(circle at 78% 18%, rgba(255, 246, 230, 0.72), transparent 0 18%),
+      radial-gradient(circle at 50% 50%, rgba(215, 185, 144, 0.18), transparent 0 28%),
+      linear-gradient(135deg, transparent 0 44%, rgba(215, 185, 144, 0.08) 44% 46%, transparent 46% 54%, rgba(215, 185, 144, 0.08) 54% 56%, transparent 56% 100%);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 520px 520px;
     background-position: center;
     mix-blend-mode: luminosity;
     pointer-events: none;
